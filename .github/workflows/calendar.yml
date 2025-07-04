@@ -1,11 +1,7 @@
 name: Hourly Run Trading Economics Calendar
 
 on:
-  workflow_run:
-    workflows: ["Clean Disk Cache & Setup + Cache Python 3.12.2"]
-    types:
-      - completed
-
+  workflow_call: #when called in the master workflow
   workflow_dispatch: # Allows manual triggering of the workflow. Helps is debugging.
 
 jobs:

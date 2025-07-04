@@ -1,11 +1,7 @@
 name: Hourly Run Distribution of Returns and Streamlit plots display
 
 on:
-  workflow_run:
-    workflows: ["Daily Python Script Run"]
-    types:
-      - completed
-    
+  workflow_call: #when called in the master workflow file
   workflow_dispatch: #allows manual triggering of the workflow. Helps in debugging.
 
 jobs:

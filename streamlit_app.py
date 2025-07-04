@@ -1179,7 +1179,12 @@ elif tab == "Event Specific Distro":
 
     st.text('The above file is for:')
     st.text(f'Event: {selected_event}')
-    if(custom):
-        st.text(f'Time: {delta} hrs relative to the event')
-    if(filter_isolated):
-        st.text(f'Event instances where there are other events in a window of ± {window_hrs} around the selected event are excluded.')
+    st.text(f'Number of instances: {len(final_df)}')
+    if(not custom and not filter_isolated):
+        st.text(f'Durataion: {dur}')
+    else:
+        if(custom):
+            st.text(f'Time: {delta} hrs relative to the event')
+        if(filter_isolated):
+            st.text(f'Event instances where there are other events in a window of ± {window_hrs} around the selected event are excluded.')
+    st.text('Hourly data is used to plot the graphs for ZN. If an event comes in at 8:30 ET, the calculation for immediate reaction is from 8 to 9 and that for pre event is from 12 to 8.')

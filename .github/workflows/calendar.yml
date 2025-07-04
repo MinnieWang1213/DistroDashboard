@@ -1,11 +1,10 @@
 name: Hourly Run Trading Economics Calendar
 
 on:
-  push:
-    branches:
-      - main  # Runs on push to the main branch
-  schedule:
-    - cron: '0 * * * *'  # Runs every hour
+  workflow_run:
+    workflows: ["Clean Disk Cache & Setup + Cache Python 3.12.2"]
+    types:
+      - completed
 
   workflow_dispatch: # Allows manual triggering of the workflow. Helps is debugging.
 

@@ -1,11 +1,7 @@
 name: Daily Python Script Run
 
 on:
-  workflow_run:
-    workflows: ["Hourly Run Trading Economics Calendar"]
-    types:
-      - completed
-    
+  workflow_call: #when called in the master workflow file
   workflow_dispatch:  #option for manual trigger
 
 jobs:

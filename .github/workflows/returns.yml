@@ -1,11 +1,10 @@
 name: Hourly Run Distribution of Returns and Streamlit plots display
 
 on:
-  push:
-    branches:
-      - main  # Runs on push to the main branch
-  schedule:
-    - cron: '0 * * * *'  # Runs every hour
+  workflow_run:
+    workflows: ["Daily Python Script Run"]
+    types:
+      - completed
     
   workflow_dispatch: #allows manual triggering of the workflow. Helps in debugging.
 

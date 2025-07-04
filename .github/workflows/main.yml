@@ -1,11 +1,10 @@
 name: Daily Python Script Run
 
 on:
-  push:
-     branches:
-       - main # Runs on push to the main branch
-  schedule:
-    - cron: '0 * * * *'  # Runs every hour
+  workflow_run:
+    workflows: ["Hourly Run Trading Economics Calendar"]
+    types:
+      - completed
     
   workflow_dispatch:  #option for manual trigger
 

@@ -2,6 +2,9 @@
 name: Master Chain Runner
 
 on:
+  push:
+    branches:
+      - main           # Triggers when something is pushed to main
   schedule:
     - cron: '0 * * * *'  # Every hour
   workflow_dispatch:

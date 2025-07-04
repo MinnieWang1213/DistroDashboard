@@ -48,20 +48,23 @@ jobs:
         git config --global user.name "siddharthapatoliyafibonacciresearch"  # Replace with your name
         git config --global user.email "siddharthapatoliya@fibonacciresearch.in"  # Replace with your email
 
-    - name: Pull latest changes to integrate remote updates
+    - name: Pull latest changes to avoid conflicts
       run: |
-        git pull origin main || echo "No changes to pull"
-
-    - name: Check if both folders have files and commit changes
+        git fetch origin main
+        git stash
+        git pull --rebase origin main || echo "No updates available"
+        git stash pop || echo "No stashed changes"
+  
+    - name: Check if folder has files and commit changes
       run: |
-        # Check if folders exist and contain files
         if [ -d "Intraday_data_files_stats_and_plots_folder" ] && [ "$(ls -A Intraday_data_files_stats_and_plots_folder)" ]; then
-          echo "Folders with files detected, committing changes"
+          echo "Folder exists and contains files — proceeding to commit"
           git add .
-          git commit -m "Add new stats/plots folders and files created by Python script" || echo "No changes to commit"
-          git push origin main --force-with-lease
+          git diff --cached --quiet || git commit -m "Add new stats/plots folders and files created by Python script"
+          git push origin main
         else
-          echo "Folders do not have files, skipping commit"
+          echo "Folder does not exist or is empty — skipping commit"
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

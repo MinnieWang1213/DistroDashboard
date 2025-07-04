@@ -3,7 +3,9 @@ name: Clean Disk Cache & Setup + Cache Python 3.12.2
 on:
   push:
     branches:
-      - main
+      - main  #will still allow for when manual commits are done.
+  schedule:
+    - cron: '0 * * * *'  # every hour
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:

@@ -5,7 +5,7 @@ on:
     branches:
       - main  #will still allow for when manual commits are done.
   schedule:
-    - cron: '0 * * * *'  # every hour
+    - cron: '0 * * * *'  # run every hour
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:

@@ -1,0 +1,23 @@
+# .github/workflows/master-runner.yml
+name: Master Chain Runner
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
+
+jobs:
+  clean-disk:
+    uses: ./.github/workflows/basic_requirements.yml
+
+  event-calendar:
+    needs: clean-disk
+    uses: ./.github/workflows/calendar.yml
+
+  intraday-data-fetching:
+    needs: event-calendar
+    uses: ./.github/workflows/main.yml
+
+  streamlit-plots:
+    needs: intraday-data-fetching
+    uses: ./.github/workflows/returns.yml

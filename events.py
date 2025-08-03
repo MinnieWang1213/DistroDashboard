@@ -1,6 +1,41 @@
 import pandas as pd
 from preprocessing import ManipulateTimezone
 import os
+
+#for converting the strings like $1.2B to numeric values. 
+# Used for conditional filtering (hotter/colder than exprected) in tab 5
+def convert_shorthand(x):
+    if pd.isna(x):
+        return x
+
+    x = str(x).strip().upper()
+    x = x.replace(',', '').replace('$', '')
+
+    # Remove any repeated leading dashes or symbols like "--", "-$", etc.
+    while x.startswith('--') or x.startswith('-$') or x.startswith('$$'):
+        x = x[1:]
+
+    # Now handle suffix multipliers
+    multiplier = 1
+    if x.endswith('M'):
+        multiplier = 1_000_000
+        x = x[:-1]
+    elif x.endswith('B'):
+        multiplier = 1_000_000_000
+        x = x[:-1]
+    elif x.endswith('K'):
+        multiplier = 1_000
+        x = x[:-1]
+    elif x.endswith('%'):
+        multiplier = 0.01
+        x = x[:-1]
+
+    try:
+        return float(x) * multiplier
+    except ValueError:
+        return pd.to_numeric(x, errors='coerce')
+
+    
 class Events:
     """Combines Events from Economic Events sheet and converts the timestamp to US/Eastern.
     """
@@ -74,19 +109,23 @@ class Events:
 
         # Add new events
         for tz_key in self.add_new_events_dic:
-            df=self.append_new_events(df[['datetime','events','tier']],events=self.add_new_events_dic[tz_key],timezone=tz_key) 
+            df=self.append_new_events(df[['datetime','events','tier' , 'actual' , 'consensus' , 'previous' , 'forecast']],events=self.add_new_events_dic[tz_key],timezone=tz_key) 
        
         df['year']=(df['datetime'].astype(str).str.split().str[0]).str.split('-').str[0]
 
         if change_tiers==True:
-            df=df[['datetime','events','year']]
+            df = df[['datetime','events','tier' , 'actual' , 'consensus' , 'previous' , 'forecast']]
             # Add New Tiers
             df['tier']=self.assign_tier(df,tier_dic)
         
         else: #only apply tiers for nan values
             df.loc[:,'tier'] = df.loc[:,'tier'].fillna(df.apply(lambda row: self.assign_tier_helper(row, tier_dic), axis=1))
   
-        df=df[['datetime','events','year','tier']]
+        df=df[['datetime','events','tier' , 'actual' , 'consensus' , 'previous' , 'forecast']]
+        df['actual'] = df['actual'].apply(convert_shorthand)
+        df['previous'] = df['previous'].apply(convert_shorthand)
+        df['consensus'] = df['consensus'].apply(convert_shorthand)
+        df['forecast'] = df['forecast'].apply(convert_shorthand)
 
         # Add flags (IND)
         finaldf=self.assign_flag(df,flag_dic)
@@ -110,7 +149,7 @@ class Events:
             # Changing column name to suit with old events file
                         
                         new_e.columns=new_e.columns.str.lower()
-                        new_e=new_e[['datetime','events','tier']]
+                        new_e=new_e[['datetime','events','tier' , 'actual' , 'consensus' , 'previous' , 'forecast']]
                         new_e['tier']=new_e['tier'].astype(int)
  
             # Appending the data

@@ -1,4 +1,5 @@
 openpyxl #compuslory to have if streamlit cloud is to be used along with csv and images downloading thing.
+xlsxwriter
 numpy
 pandas
 pillow
